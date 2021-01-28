@@ -1,0 +1,26 @@
+---
+- name: playbook
+  hosts: all
+  become: yes
+  gather_facts: no
+  vars:
+    installation_status: []
+  vars_prompt:
+    - name: packages
+      prompt: Please specify the package names seperated by commas
+      private: no
+  tasks:
+    - name: Install Packages
+      yum:
+        name: "{{ item }}"
+      loop: "{{ packages.split(',') }}"
+      register: result
+    - debug:
+        var: result
+    - name: set_facts on installation status
+      set_fact:
+        installation_status: "{{ installation_status }} + [  '{{ item.changed }}' ]"
+      loop: "{{ result.results }}"
+    - debug:
+        msg: "{% if item == 'False' %} Already installed {% else %} Installing {% endif %}"
+      loop: "{{ installation_status }}"
