@@ -9,10 +9,12 @@
           yum:
             list: httpd
           register: output
-          failed_when: output.rc == 1
+          failed_when: output.changed == false
+        - debug:
+            var: output.changed
       rescue:
         - debug:
-            msg: "Httpd is already installed"
+            msg: "Httpd Already installed"
     - name: Creating log
       file:
         path: /var/www/html/logs
