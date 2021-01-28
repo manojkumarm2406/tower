@@ -1,6 +1,7 @@
 ---
 - name: Webserver
   hosts: all
+  gather_facts: no
   become: yes
   tasks:
     - name: httpd block
